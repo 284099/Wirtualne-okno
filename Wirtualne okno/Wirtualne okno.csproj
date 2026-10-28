@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<!-- Wymuszamy kompilację TYLKO na Androida (naprawia to błędy CS0234 i CS0246) -->
 		<TargetFrameworks>net9.0-android</TargetFrameworks>
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Wirtualne_okno</RootNamespace>
@@ -10,7 +9,9 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
-		<!-- Podnosimy minimalną wersję Androida do 24.0 (naprawia to błędy uses-sdk / API 21) -->
+		<!-- Wyłącza błąd ładowania bibliotek .so na Androidzie 14+ w trybie Debug -->
+		<AndroidEnableNativeLibraryCompression>false</AndroidEnableNativeLibraryCompression>
+
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
