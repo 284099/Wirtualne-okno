@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<!-- Wymuszamy kompilację TYLKO na Androida (naprawia to błędy CS0234 i CS0246) -->
+		<TargetFrameworks>net9.0-android</TargetFrameworks>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Wirtualne_okno</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- Podnosimy minimalną wersję Androida do 24.0 (naprawia to błędy uses-sdk / API 21) -->
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+
+		<!-- Splash Screen -->
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+
+		<!-- Images -->
+		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
+		
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+
+		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+		<!-- Istniejące pakiety, które masz już w projekcie: -->
+		<PackageReference Include="Xamarin.Google.MLKit.FaceDetection" Version="116.1.7" />
+		<PackageReference Include="Xamarin.AndroidX.Camera.Core" Version="1.3.4" />
+		<PackageReference Include="Xamarin.AndroidX.Camera.Camera2" Version="1.3.4" />
+		<PackageReference Include="Xamarin.AndroidX.Camera.Lifecycle" Version="1.3.4" />
+
+		<!-- DODAJ TE DWIE LINIJKI, ABY NAPRAWIĆ BŁĄD JAVA0000 FragmentKt: -->
+		<PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.8.6.1" />
+		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.8.6.1" />
+	</ItemGroup>
+
+</Project>

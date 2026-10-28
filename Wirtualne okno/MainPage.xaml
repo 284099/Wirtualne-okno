@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Wirtualne_okno.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="#0D1117">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="24"
+            Spacing="20"
+            VerticalOptions="Center">
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="22"
+                HorizontalTextAlignment="Center"
+                Text="Zajęcia 1: Śledzenie Twarzy AI"
+                TextColor="#58A6FF" />
+
+            <!--  Karta ze statusem AI  -->
+            <Border
+                Padding="16"
+                BackgroundColor="#161B22"
+                Stroke="#30363D"
+                StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="6">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="11"
+                        Text="STATUS AI"
+                        TextColor="#8B949E" />
+                    <Label
+                        x:Name="AiStatusLabel"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="Inicjalizacja kamery..."
+                        TextColor="#FFA657" />
+                    <Label
+                        x:Name="PixelDistanceLabel"
+                        FontSize="13"
+                        Text="Rozstaw źrenic: 0.0 px"
+                        TextColor="#C9D1D9" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!--  Karta ze współrzędnymi XYZ po filtracji  -->
+            <Border
+                Padding="16"
+                BackgroundColor="#161B22"
+                Stroke="#30363D"
+                StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="10">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="11"
+                        Text="WSPÓŁRZĘDNE (X, Y, Z) PO FILTRACJI"
+                        TextColor="#8B949E" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <Border
+                            Grid.Column="0"
+                            Padding="10"
+                            BackgroundColor="#21262D"
+                            StrokeShape="RoundRectangle 8"
+                            StrokeThickness="0">
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label
+                                    FontSize="11"
+                                    HorizontalOptions="Center"
+                                    Text="OŚ X"
+                                    TextColor="#8B949E" />
+                                <Label
+                                    x:Name="PosXLabel"
+                                    FontAttributes="Bold"
+                                    FontSize="18"
+                                    HorizontalOptions="Center"
+                                    Text="0.00"
+                                    TextColor="#58A6FF" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border
+                            Grid.Column="1"
+                            Padding="10"
+                            BackgroundColor="#21262D"
+                            StrokeShape="RoundRectangle 8"
+                            StrokeThickness="0">
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label
+                                    FontSize="11"
+                                    HorizontalOptions="Center"
+                                    Text="OŚ Y"
+                                    TextColor="#8B949E" />
+                                <Label
+                                    x:Name="PosYLabel"
+                                    FontAttributes="Bold"
+                                    FontSize="18"
+                                    HorizontalOptions="Center"
+                                    Text="0.00"
+                                    TextColor="#58A6FF" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border
+                            Grid.Column="2"
+                            Padding="10"
+                            BackgroundColor="#21262D"
+                            StrokeShape="RoundRectangle 8"
+                            StrokeThickness="0">
+                            <VerticalStackLayout HorizontalOptions="Center">
+                                <Label
+                                    FontSize="11"
+                                    HorizontalOptions="Center"
+                                    Text="OŚ Z"
+                                    TextColor="#8B949E" />
+                                <Label
+                                    x:Name="PosZLabel"
+                                    FontAttributes="Bold"
+                                    FontSize="18"
+                                    HorizontalOptions="Center"
+                                    Text="2.50"
+                                    TextColor="#3FB950" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Label
+                        x:Name="RawCoordsLabel"
+                        Margin="0,4,0,0"
+                        FontSize="11"
+                        HorizontalTextAlignment="Center"
+                        Text="Surowy odczyt przed filtrem: X=0.00, Y=0.00, Z=2.50"
+                        TextColor="#8B949E" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!--  Wizualny celownik z ruszającą się kropką  -->
+            <Border
+                Padding="16"
+                BackgroundColor="#161B22"
+                Stroke="#30363D"
+                StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="8">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="11"
+                        Text="CELOWNIK POZYCJI 2D"
+                        TextColor="#8B949E" />
+                    <Grid BackgroundColor="#0D1117" HeightRequest="130">
+                        <BoxView
+                            HeightRequest="1"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Center"
+                            Color="#21262D" />
+                        <BoxView
+                            HorizontalOptions="Center"
+                            VerticalOptions="Fill"
+                            WidthRequest="1"
+                            Color="#21262D" />
+
+                        <Border
+                            x:Name="HeadMarker"
+                            BackgroundColor="#58A6FF"
+                            HeightRequest="20"
+                            HorizontalOptions="Center"
+                            Stroke="#79C0FF"
+                            StrokeShape="RoundRectangle 10"
+                            StrokeThickness="2"
+                            VerticalOptions="Center"
+                            WidthRequest="20" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
