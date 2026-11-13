@@ -7,7 +7,7 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: #000;
+            background-color: #111;
         }
 
         canvas {
@@ -16,92 +16,97 @@
             height: 100vh;
         }
     </style>
-    <!-- Ładowanie Three.js z CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
     <script>
-        // Inicjalizacja sceny
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB); // Niebo
+        scene.background = new THREE.Color(0x111111);
 
-        // Konfiguracja kamery
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
-        // Początkowa pozycja (środek, bazowa odległość Z)
-        let baseCameraZ = 5;
-        camera.position.set(0, 0, baseCameraZ);
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 0);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // Oświetlenie
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.position.set(5, 10, 5);
+        dirLight.position.set(0, 20, 10);
         scene.add(dirLight);
 
-        // 1. RAMKA OKNA (Zawsze nieruchoma na współrzędnej Z=0)
-        // Działa jak fizyczna krawędź ekranu telefonu
-        const frameMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
+        // ==========================================
+        // 1. LEWITUJĄCA RAMKA (Podniesiona i pomniejszona)
+        // ==========================================
+        const frameGroup = new THREE.Group();
+        // Podniesienie całej ramki w osi Y (było 0, jest 1.5)
+        frameGroup.position.set(0, 1.5, -15);
 
-        // Górna belka
-        const topFrame = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 0.2), frameMaterial);
-        topFrame.position.set(0, 2, 0);
-        scene.add(topFrame);
+        const frameMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
 
-        // Dolna belka
-        const bottomFrame = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 0.2), frameMaterial);
-        bottomFrame.position.set(0, -2, 0);
-        scene.add(bottomFrame);
+        // Zmniejszone wymiary
+        const fw = 8.0;  // szerokość (było 10)
+        const fh = 5.5;  // wysokość (było 8)
+        const ft = 0.4;  // grubość (było 0.5)
 
-        // Lewa belka
-        const leftFrame = new THREE.Mesh(new THREE.BoxGeometry(0.5, 4.5, 0.2), frameMaterial);
-        leftFrame.position.set(-3, 0, 0);
-        scene.add(leftFrame);
+        const topF = new THREE.Mesh(new THREE.BoxGeometry(fw + ft * 2, ft, ft), frameMaterial);
+        topF.position.set(0, fh / 2 + ft / 2, 0);
+        frameGroup.add(topF);
 
-        // Prawa belka
-        const rightFrame = new THREE.Mesh(new THREE.BoxGeometry(0.5, 4.5, 0.2), frameMaterial);
-        rightFrame.position.set(3, 0, 0);
-        scene.add(rightFrame);
+        const botF = new THREE.Mesh(new THREE.BoxGeometry(fw + ft * 2, ft, ft), frameMaterial);
+        botF.position.set(0, -fh / 2 - ft / 2, 0);
+        frameGroup.add(botF);
 
-        // 2. OBIEKTY W TLE (Scenografia, Z ujemne - za oknem)
-        const objectMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 }); // Zielony (las/bloki)
-        for (let i = 0; i < 20; i++) {
-            const cube = new THREE.Mesh(new THREE.BoxGeometry(0.5 + Math.random(), 1 + Math.random()*3, 0.5 + Math.random()), objectMaterial);
-            // Rozmieszczenie za ramką (Z od -2 do -15)
-            cube.position.x = (Math.random() - 0.5) * 15;
-            cube.position.y = (Math.random() - 0.5) * 5;
-            cube.position.z = -2 - Math.random() * 15;
-            scene.add(cube);
+        const leftF = new THREE.Mesh(new THREE.BoxGeometry(ft, fh, ft), frameMaterial);
+        leftF.position.set(-fw / 2 - ft / 2, 0, 0);
+        frameGroup.add(leftF);
+
+        const rightF = new THREE.Mesh(new THREE.BoxGeometry(ft, fh, ft), frameMaterial);
+        rightF.position.set(fw / 2 + ft / 2, 0, 0);
+        frameGroup.add(rightF);
+
+        scene.add(frameGroup);
+
+        // ==========================================
+        // 2. MIASTO W TLE
+        // ==========================================
+        const cityGroup = new THREE.Group();
+        cityGroup.position.set(0, -2, -25);
+
+        const objectMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+        for (let i = 0; i < 40; i++) {
+            const w = 1 + Math.random() * 2;
+            const h = 2 + Math.random() * 8;
+            const d = 1 + Math.random() * 2;
+            const cube = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), objectMaterial);
+
+            cube.position.x = (Math.random() - 0.5) * 30;
+            cube.position.y = h / 2 - 2;
+            cube.position.z = -Math.random() * 20;
+            cityGroup.add(cube);
         }
 
-        // Płaszczyzna podłogi w tle
         const plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(30, 30),
+            new THREE.PlaneGeometry(60, 60),
             new THREE.MeshLambertMaterial({ color: 0x8B4513 })
         );
         plane.rotation.x = -Math.PI / 2;
         plane.position.y = -2;
         plane.position.z = -10;
-        scene.add(plane);
+        cityGroup.add(plane);
 
-        // Funkcja wywoływana z C# (MainPage.xaml.cs) przy każdej klatce kamery ML Kit
-        window.updateCameraPosition = function(x, y, z) {
-            // Mnożniki (10 i 5) dostosowują zakres normalizowanych koordynatów (-1 do 1) do jednostek sceny 3D
-            // Parametr Z (z C# ma zakres 0.5 - 5.0) skalujemy dla głębi.
-            const targetX = x * 10;
-            const targetY = -y * 5; // Y zwykle trzeba odwrócić, by zgadzał się z ruchem głowy
-            const targetZ = baseCameraZ + (z - 2.5) * 2;
+        scene.add(cityGroup);
 
-            // Prosta translacja kamery (dla pełnego off-axis projection tu zmodyfikujemy Macierz Projekcji w etapie 2)
-            camera.position.x = targetX;
-            camera.position.y = targetY;
-            camera.position.z = Math.max(targetZ, 1); // Blokada przed wejściem w ramkę
+        // ==========================================
+        // 3. STEROWANIE KAMERĄ
+        // ==========================================
+        window.updateCameraPosition = function (x, y, z) {
+            camera.position.x = x * 10;
+            camera.position.y = -y * 8;
+            camera.position.z = (z - 2.5) * 2;
 
-            // Kamera zawsze patrzy na środek "okna"
-            camera.lookAt(0, 0, -5);
+            camera.lookAt(camera.position.x, camera.position.y, -100);
         };
 
         function animate() {
@@ -111,7 +116,6 @@
 
         animate();
 
-        // Skalowanie przy obrocie telefonu
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
