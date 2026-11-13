@@ -50,4 +50,10 @@
 		<PackageReference Include="Xamarin.AndroidX.Fragment.Ktx" Version="1.8.6.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <MauiXaml Update="MainPage2.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>

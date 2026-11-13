@@ -4,11 +4,18 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Wirtualne_okno"
-    Title="Wirtualne_okno">
+    Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <!--  Zakładka 1: Diagnostyka i Telemetria  -->
+        <Tab Title="Telemetria">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" />
+        </Tab>
+
+        <!--  Zakładka 2: Scena 3D  -->
+        <Tab Title="Scena 3D">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage2}" />
+        </Tab>
+    </TabBar>
 
 </Shell>

@@ -13,6 +13,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IHeadTrackingService, AndroidHeadTrackingService>();
         builder.Services.AddTransient<MainPage>();
+        builder.Services.AddTransient<MainPage2>();
 
 #if DEBUG
         builder.Logging.AddDebug();

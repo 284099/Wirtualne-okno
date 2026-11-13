@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <!-- Ładowanie Three.js z CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <script>
+        // Inicjalizacja sceny
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB); // Niebo
+
+        // Konfiguracja kamery
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        // Początkowa pozycja (środek, bazowa odległość Z)
+        let baseCameraZ = 5;
+        camera.position.set(0, 0, baseCameraZ);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Oświetlenie
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 10, 5);
+        scene.add(dirLight);
+
+        // 1. RAMKA OKNA (Zawsze nieruchoma na współrzędnej Z=0)
+        // Działa jak fizyczna krawędź ekranu telefonu
+        const frameMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
+
+        // Górna belka
+        const topFrame = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 0.2), frameMaterial);
+        topFrame.position.set(0, 2, 0);
+        scene.add(topFrame);
+
+        // Dolna belka
+        const bottomFrame = new THREE.Mesh(new THREE.BoxGeometry(6, 0.5, 0.2), frameMaterial);
+        bottomFrame.position.set(0, -2, 0);
+        scene.add(bottomFrame);
+
+        // Lewa belka
+        const leftFrame = new THREE.Mesh(new THREE.BoxGeometry(0.5, 4.5, 0.2), frameMaterial);
+        leftFrame.position.set(-3, 0, 0);
+        scene.add(leftFrame);
+
+        // Prawa belka
+        const rightFrame = new THREE.Mesh(new THREE.BoxGeometry(0.5, 4.5, 0.2), frameMaterial);
+        rightFrame.position.set(3, 0, 0);
+        scene.add(rightFrame);
+
+        // 2. OBIEKTY W TLE (Scenografia, Z ujemne - za oknem)
+        const objectMaterial = new THREE.MeshLambertMaterial({ color: 0x228B22 }); // Zielony (las/bloki)
+        for (let i = 0; i < 20; i++) {
+            const cube = new THREE.Mesh(new THREE.BoxGeometry(0.5 + Math.random(), 1 + Math.random()*3, 0.5 + Math.random()), objectMaterial);
+            // Rozmieszczenie za ramką (Z od -2 do -15)
+            cube.position.x = (Math.random() - 0.5) * 15;
+            cube.position.y = (Math.random() - 0.5) * 5;
+            cube.position.z = -2 - Math.random() * 15;
+            scene.add(cube);
+        }
+
+        // Płaszczyzna podłogi w tle
+        const plane = new THREE.Mesh(
+            new THREE.PlaneGeometry(30, 30),
+            new THREE.MeshLambertMaterial({ color: 0x8B4513 })
+        );
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.y = -2;
+        plane.position.z = -10;
+        scene.add(plane);
+
+        // Funkcja wywoływana z C# (MainPage.xaml.cs) przy każdej klatce kamery ML Kit
+        window.updateCameraPosition = function(x, y, z) {
+            // Mnożniki (10 i 5) dostosowują zakres normalizowanych koordynatów (-1 do 1) do jednostek sceny 3D
+            // Parametr Z (z C# ma zakres 0.5 - 5.0) skalujemy dla głębi.
+            const targetX = x * 10;
+            const targetY = -y * 5; // Y zwykle trzeba odwrócić, by zgadzał się z ruchem głowy
+            const targetZ = baseCameraZ + (z - 2.5) * 2;
+
+            // Prosta translacja kamery (dla pełnego off-axis projection tu zmodyfikujemy Macierz Projekcji w etapie 2)
+            camera.position.x = targetX;
+            camera.position.y = targetY;
+            camera.position.z = Math.max(targetZ, 1); // Blokada przed wejściem w ramkę
+
+            // Kamera zawsze patrzy na środek "okna"
+            camera.lookAt(0, 0, -5);
+        };
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Skalowanie przy obrocie telefonu
+        window.addEventListener('resize', onWindowResize, false);
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
+</body>
+</html>
